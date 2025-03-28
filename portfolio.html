@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>תיק עבודות - Made Tomorrow</title>
+  <link rel="stylesheet" href="style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+  <style>
+    /* סגנונות ייחודיים לעמוד תיק העבודות */
+    .portfolio-page {
+      padding: 140px 0 80px;
+    }
+    
+    .portfolio-intro {
+      text-align: center;
+      margin-bottom: 60px;
+    }
+    
+    .portfolio-intro h1 {
+      font-size: 3rem;
+      margin-bottom: 20px;
+      color: var(--dark);
+      position: relative;
+      display: inline-block;
+    }
+    
+    .portfolio-intro h1::after {
+      content: '';
+      position: absolute;
+      width: 80px;
+      height: 4px;
+      background: var(--vibrant-gradient);
+      bottom: -10px;
+      left: 50%;
+      transform: translateX(-50%);
+      border-radius: 2px;
+    }
+    
+    .portfolio-intro p {
+      font-size: 1.2rem;
+      max-width: 800px;
+      margin: 0 auto 40px;
+      color: var(--gray);
+    }
+    
+    .filter-bar {
+      display: flex;
+      justify-content: center;
+      flex-wrap: wrap;
+      gap: 15px;
+      margin-bottom: 40px;
+    }
+    
+    .filter-btn {
+      background: transparent;
+      border: 1px solid var(--light-gray);
+      color: var(--gray);
+      padding: 8px 20px;
+      border-radius: 30px;
+      cursor: pointer;
+      transition: var(--transition);
+      font-weight: 500;
+    }
+    
+    .filter-btn:hover, .filter-btn.active {
+      background: var(--vibrant-gradient);
+      color: white;
+      border-color: transparent;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .portfolio-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(320px, 1fr));
+      gap: 30px;
+      margin-bottom: 60px;
+    }
+    
+    .portfolio-item {
+      border-radius: 16px;
+      overflow: hidden;
+      box-shadow: var(--shadow-sm);
+      transition: var(--transition);
+      position: relative;
+      background: var(--white);
+      border: 1px solid var(--light-gray);
+    }
+    
+    .portfolio-item:hover {
+      transform: translateY(-10px);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .portfolio-image {
+      width: 100%;
+      height: 220px;
+      position: relative;
+      overflow: hidden;
+    }
+    
+    .portfolio-image img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: var(--transition);
+    }
+    
+    .portfolio-item:hover .portfolio-image img {
+      transform: scale(1.05);
+    }
+    
+    .portfolio-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(to top, rgba(0,0,0,0.7) 0%, rgba(0,0,0,0) 60%);
+      opacity: 0;
+      transition: var(--transition);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+    }
+    
+    .portfolio-item:hover .portfolio-overlay {
+      opacity: 1;
+    }
+    
+    .portfolio-view {
+      background: var(--white);
+      color: var(--dark);
+      padding: 10px 25px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transform: translateY(20px);
+      opacity: 0;
+      transition: var(--transition);
+      transition-delay: 0.1s;
+    }
+    
+    .portfolio-item:hover .portfolio-view {
+      transform: translateY(0);
+      opacity: 1;
+    }
+    
+    .portfolio-content {
+      padding: 25px;
+    }
+    
+    .portfolio-content h3 {
+      font-size: 1.3rem;
+      margin-bottom: 10px;
+      color: var(--dark);
+      transition: var(--transition);
+    }
+    
+    .portfolio-item:hover .portfolio-content h3 {
+      background: var(--vibrant-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      color: transparent;
+    }
+    
+    .portfolio-content p {
+      color: var(--gray);
+      margin-bottom: 15px;
+      font-size: 0.95rem;
+      line-height: 1.6;
+    }
+    
+    .portfolio-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+    
+    .portfolio-tag {
+      background-color: rgba(124, 58, 237, 0.1);
+      color: var(--purple);
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: 500;
+      transition: var(--transition);
+    }
+    
+    .portfolio-item:hover .portfolio-tag {
+      background-color: rgba(124, 58, 237, 0.2);
+    }
+    
+    .back-to-home {
+    text-align: center;
+    margin-top: 40px;
+    margin-bottom: 60px;
+    }
+    
+    /* שינוי עיצוב כפתור החזרה לדף הבית בעמוד תיק העבודות */
+    .back-btn {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(124, 58, 237, 0.1);
+      border: none;
+      color: var(--purple);
+      padding: 10px 25px;
+      border-radius: 30px;
+      text-decoration: none;
+      font-weight: 600;
+      transition: var(--transition);
+      position: relative;
+      z-index: 1;
+      overflow: hidden;
+      box-shadow: 0 4px 10px rgba(124, 58, 237, 0.1);
+    }
+
+    .back-btn::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: var(--vibrant-gradient);
+      opacity: 0;
+      transition: var(--transition);
+      z-index: -1;
+    }
+
+    .back-btn:hover {
+      color: white;
+      transform: translateY(-3px);
+      box-shadow: 0 8px 20px rgba(124, 58, 237, 0.3);
+    }
+
+    .back-btn:hover::before {
+      opacity: 1;
+    }
+
+    .back-btn svg {
+      transition: var(--transition);
+    }
+
+    .back-btn:hover svg {
+      transform: translateX(-5px);
+      stroke: white; /* אם הוגדר צבע הקו של ה-SVG ב-stroke */
+      fill: white; /* אם הוגדר צבע המילוי של ה-SVG ב-fill */
+    }
+    
+    .hidden {
+      display: none !important;
+    }
+    
+    /* תג חדש */
+    .new-tag {
+      position: absolute;
+      top: 15px;
+      right: 15px;
+      background: var(--vibrant-gradient);
+      color: white;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      font-weight: bold;
+      box-shadow: var(--shadow-md);
+      z-index: 10;
+    }
+    
+    /* תגית טכנולוגיה */
+    .tech-badge {
+      position: absolute;
+      bottom: 15px;
+      left: 15px;
+      background: rgba(0,0,0,0.7);
+      color: white;
+      padding: 5px 10px;
+      border-radius: 20px;
+      font-size: 0.75rem;
+      z-index: 10;
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    
+    @media (max-width: 768px) {
+      .portfolio-grid {
+        grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+      }
+      
+      .portfolio-intro h1 {
+        font-size: 2.2rem;
+      }
+      
+      .portfolio-intro p {
+        font-size: 1rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <!-- Header -->
+  <header>
+    <div class="container header-container">
+      <div class="logo">
+        <div class="logo-mark">MT</div>
+        <div class="logo-text"><span>M</span>ade <span>T</span>omorrow</div>
+      </div>
+      <nav>
+        <ul>
+          <li><a href="index.html">עמוד הבית</a></li>
+          <li><a href="index.html#services">שירותים</a></li>
+          <li><a href="index.html#process">תהליך עבודה</a></li>
+          <li><a href="index.html#faq">שאלות נפוצות</a></li>
+          <li><a href="index.html#contact" class="contact-btn">צור קשר</a></li>
+        </ul>
+      </nav>
+    </div>
+  </header>
+
+  <!-- תיק עבודות -->
+  <section class="portfolio-page">
+    <div class="container">
+      <div class="portfolio-intro">
+        <h1>תיק העבודות שלנו</h1>
+        <p>ריכזנו כאן את הפרויקטים שיצרנו, כולל דפי נחיתה, אתרים ועיצובים אחרים. כל פרויקט נבנה תוך התחשבות בצרכים הייחודיים של הלקוח והמטרות העסקיות שלו.</p>
+      </div>
+      
+      <div class="filter-bar">
+        <button class="filter-btn active" data-filter="all">הכל</button>
+        <button class="filter-btn" data-filter="landing">דפי נחיתה</button>
+        <button class="filter-btn" data-filter="website">אתרים</button>
+      </div>
+      
+      <div class="portfolio-grid">
+        <!-- פרויקט 1 - דף נחיתה למזון ישראלי -->
+        <div class="portfolio-item" data-category="landing">
+          <div class="portfolio-image">
+            <img src="images/israelFood.jpg" alt="דף נחיתה למזון ישראלי">
+            <div class="portfolio-overlay">
+              <a href="https://mmmtweb2.github.io/israelFood/" class="portfolio-view" target="_blank">צפה באתר</a>
+            </div>
+            <span class="tech-badge">HTML/CSS</span>
+          </div>
+          <div class="portfolio-content">
+            <h3>דף נחיתה לקייטרינג</h3>
+            <p>דף נחיתה אינטראקטיבי שמציג קייטרינג עם תפריט ופרטי קשר.</p>
+            <div class="portfolio-tags">
+              <span class="portfolio-tag">דף נחיתה</span>
+              <span class="portfolio-tag">אוכל</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- פרויקט 2 - דף נחיתה טוען רבני -->
+        <div class="portfolio-item" data-category="landing">
+          <div class="portfolio-image">
+            <img src="images/sraya.png" alt="דף נחיתה sraya">
+            <div class="portfolio-overlay">
+              <!-- <a href="https://mmmtweb2.github.io/sraya/" class="portfolio-view" target="_blank">צפה באתר</a> -->
+              <a href="https://rabbinic-claim-sria-eliashiv.onrender.com" class="portfolio-view" target="_blank">צפה באתר</a>
+            <!-- </div> -->
+            </div>
+            <span class="tech-badge">HTML/CSS</span>
+          </div>
+          <div class="portfolio-content">
+            <h3>דף נחיתה טוען רבני</h3>
+            <p>דף נחיתה אינטראקטיבי לטוען רבני.</p>
+            <div class="portfolio-tags">
+              <span class="portfolio-tag">דף נחיתה</span>
+              <span class="portfolio-tag">משפטים</span>
+            </div>
+          </div>
+        </div>
+        
+        <!-- פרויקט 3 - אתר כרטיסי ברכה -->
+        <div class="portfolio-item" data-category="website">
+          <div class="portfolio-image">
+            <img src="images/wishweaver-card.png" alt="אתר כרטיסי ברכה">
+            <div class="portfolio-overlay">
+              <a href="https://mmmtweb2.github.io/WishWeaver/" class="portfolio-view" target="_blank">צפה באתר</a>
+            </div>
+            <span class="tech-badge">HTML/CSS/JS</span>
+          </div>
+          <div class="portfolio-content">
+            <h3>אתר ליצירת כרטיסי ברכה</h3>
+            <p>אתר ליצירת ושיתוף כרטיסי ברכה מעוצבים</p>
+            <div class="portfolio-tags">
+              <span class="portfolio-tag">אתר</span>
+              <span class="portfolio-tag">מחשבים</span>
+            </div>
+          </div>
+        </div>
+
+        <div class="portfolio-item" data-category="website">
+          <div class="portfolio-image">
+            <img src="images/FoodRecipes.png" alt="אתר מתכונים">
+            <div class="portfolio-overlay">
+              <a href="https://recipe-app-react-web.pages.dev/" class="portfolio-view" target="_blank">צפה באתר</a>
+            </div>
+            <span class="tech-badge">React/JS</span>
+          </div>
+          <div class="portfolio-content">
+            <h3>אתר למתכונים</h3>
+            <p>צפייה במתכונים מעולים בשלל סגנונות</p>
+            <div class="portfolio-tags">
+              <span class="portfolio-tag">אתר</span>
+              <span class="portfolio-tag">מחשבים</span>
+            </div>
+          </div>
+        </div>
+        
+      </div>
+      
+      <div class="back-to-home">
+        <a href="index.html" class="back-btn">
+          <svg width="20" height="20" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M19 12H5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            <path d="M12 19L5 12L12 5" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+          </svg>
+          חזרה לעמוד הבית
+        </a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <div class="container">
+      <div class="footer-container">
+        <div class="footer-about">
+          <a href="index.html" class="footer-logo"><span>M</span>ade <span>T</span>omorrow</a>
+          <p>אנחנו מתמחים בבניית פתרונות דיגיטליים מהירים ואיכותיים שיקדמו את העסק שלך לעתיד טכנולוגי טוב יותר.</p>
+        </div>
+        <div class="footer-links">
+          <h4>שירותים</h4>
+          <nav class="footer-nav">
+            <ul>
+              <li><a href="index.html#services">דפי נחיתה</a></li>
+              <li><a href="index.html#services">אתרים</a></li>
+            </ul>
+          </nav>
+        </div>
+        <div class="footer-links">
+          <h4>קישורים מהירים</h4>
+          <nav class="footer-nav">
+            <ul>
+              <li><a href="index.html">עמוד הבית</a></li>
+              <li><a href="index.html#services">שירותים</a></li>
+              <li><a href="index.html#process">תהליך עבודה</a></li>
+              <li><a href="index.html#faq">שאלות נפוצות</a></li>
+              <li><a href="portfolio.html">תיק עבודות</a></li>
+              <li><a href="index.html#contact">צור קשר</a></li>
+            </ul>
+          </nav>
+        </div>
+      </div>
+      <div class="copyright">
+        <p>&copy; 2025 Made Tomorrow. כל הזכויות שמורות.</p>
+      </div>
+    </div>
+  </footer>
+
+  <!-- סקריפט לסינון עבודות -->
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const filterButtons = document.querySelectorAll('.filter-btn');
+      const portfolioItems = document.querySelectorAll('.portfolio-item');
+      
+      // טיפול בלחיצה על כפתורי הסינון
+      filterButtons.forEach(button => {
+        button.addEventListener('click', function() {
+          // הסרת הקלאס האקטיבי מכל הכפתורים
+          filterButtons.forEach(btn => btn.classList.remove('active'));
+          
+          // הוספת הקלאס האקטיבי לכפתור הנוכחי
+          this.classList.add('active');
+          
+          // קבלת הקטגוריה לסינון
+          const filterValue = this.getAttribute('data-filter');
+          
+          // סינון הפריטים
+          portfolioItems.forEach(item => {
+            if (filterValue === 'all' || item.getAttribute('data-category') === filterValue) {
+              item.classList.remove('hidden');
+            } else {
+              item.classList.add('hidden');
+            }
+          });
+        });
+      });
+      
+      // הנפשה לתמונות בעת מעבר עכבר
+      portfolioItems.forEach(item => {
+        item.addEventListener('mouseenter', function() {
+          this.classList.add('hover');
+        });
+        
+        item.addEventListener('mouseleave', function() {
+          this.classList.remove('hover');
+        });
+      });
+    });
+  </script>
+</body>
+</html>
