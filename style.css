@@ -1700,3 +1700,10 @@ body {
     flex: 0 0 100%;
   }
 }
+.credit{
+  display: flex;
+  justify-content: center;
+}
+.link{
+  color: #90e0ef;
+}
