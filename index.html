@@ -10,7 +10,8 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
   <!-- הוספת EmailJS -->
   <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
-  <!--ניתוח נתונים-->
+  <script src="https://cdn.jsdelivr.net/npm/emailjs-com@3/dist/email.min.js"></script>
+    <!--ניתוח נתונים-->
   <!-- Google tag (gtag.js) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-TDDWH4L6JY"></script>
   <script>
@@ -20,8 +21,10 @@
 
     gtag('config', 'G-TDDWH4L6JY');
   </script>
+  
 </head>
 <body>
+
 
   <!-- Header -->  
   <header>
@@ -295,6 +298,41 @@
             
             <!-- הוספת סגנון CSS שצריך להוסיף לקובץ style.css -->
             <style>
+              .form-message {
+  padding: 12px 16px;
+  margin-bottom: 20px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  font-weight: 500;
+}
+
+.success-message {
+  background-color: rgba(39, 174, 96, 0.1);
+  color: #27ae60;
+  border: 1px solid #27ae60;
+}
+
+.error-message {
+  background-color: rgba(231, 76, 60, 0.1);
+  color: #e74c3c;
+  border: 1px solid #e74c3c;
+}
+
+.form-message i {
+  margin-left: 10px;
+  font-size: 18px;
+}
+
+.input-error {
+  border-color: #e74c3c !important;
+}
+
+.error-message {
+  color: #e74c3c;
+  font-size: 0.85rem;
+  margin-top: 5px;
+}
             .phone-container {
               display: flex;
               align-items: center;
@@ -356,7 +394,7 @@
           </div>
         </div>
         <div class="contact-form">
-          <form id="contactForm">
+          <form id="contactForm" action="#" method="post">
             <div class="form-group">
               <label for="name">שם מלא</label>
               <input type="text" id="name" name="name" placeholder="השם שלך" required>

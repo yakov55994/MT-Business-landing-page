@@ -1,36 +1,24 @@
-// הוסף קוד זה לקובץ script.js או צור קובץ חדש contact-form.js
-// החלק הראשון עובד עם FormSubmit.co - שירות חינמי לשליחת טפסים במייל
-
+// קוד JavaScript לטיפול בטופס צור קשר באמצעות EmailJS
 document.addEventListener('DOMContentLoaded', function () {
     const contactForm = document.getElementById('contactForm');
 
     if (contactForm) {
-        // הגדר את כתובת השליחה ל-FormSubmit
-        contactForm.setAttribute('action', 'https://formsubmit.co/mmmtweb2@gmail.com');
-        contactForm.setAttribute('method', 'POST');
+        // אתחול EmailJS
+        // יש להחליף את [YOUR_PUBLIC_KEY] בקוד הציבורי שלך מהחשבון ב-EmailJS
+        emailjs.init("lMSMFWaEKujVoJs7B");
 
-        // הוסף שדות נסתרים לקונפיגורציה
-        const hiddenFields = [
-            { name: '_subject', value: 'פנייה חדשה מהאתר Made Tomorrow' },
-            { name: '_template', value: 'table' },
-            { name: '_captcha', value: 'false' }, // הסר את זה אם אתה רוצה אבטחת captcha
-            { name: '_next', value: window.location.origin + '/thank-you.html' } // דף תודה לאחר השליחה
-        ];
-
-        hiddenFields.forEach(field => {
-            const input = document.createElement('input');
-            input.type = 'hidden';
-            input.name = field.name;
-            input.value = field.value;
-            contactForm.appendChild(input);
-        });
-
-        // הוסף וולידציה וטיפול בשליחה
+        // וולידציה וטיפול בשליחה
         contactForm.addEventListener('submit', function (e) {
+            e.preventDefault();
+            
             let isValid = true;
             const nameInput = document.getElementById('name');
             const emailInput = document.getElementById('email');
             const messageInput = document.getElementById('message');
+            const phoneInput = document.getElementById('phone');
+            const businessTypeInput = document.getElementById('business-type');
+            const serviceInput = document.getElementById('service');
+            const budgetInput = document.getElementById('budget');
 
             // וולידציה בסיסית
             if (!nameInput.value.trim()) {
@@ -48,43 +36,67 @@ document.addEventListener('DOMContentLoaded', function () {
                 isValid = false;
             }
 
-            if (!isValid) {
-                e.preventDefault();
-            } else {
+            if (isValid) {
                 // הצג אינדיקציה לשליחה
                 const submitBtn = contactForm.querySelector('button[type="submit"]');
                 submitBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> שולח...';
                 submitBtn.disabled = true;
+            
+                // הכנת הפרמטרים לשליחה
+                const templateParams = {
+                    name: nameInput.value,
+                    email: emailInput.value,
+                    phone: phoneInput.value || 'לא צוין',
+                    business_type: businessTypeInput.value || 'לא צוין',
+                    service: serviceInput.value || 'לא צוין',
+                    budget: budgetInput.value || 'לא צוין',
+                    message: messageInput.value
+                };
+            
+                // שליחה באמצעות EmailJS לך (בעל האתר)
+                emailjs.send('service_dv42uhs', 'template_5r8219s', templateParams)
+                    .then(function(response) {
+                        console.log('SUCCESS - Notification to owner!', response.status, response.text);
+                        
+                        // לאחר שליחה מוצלחת לבעל האתר, שלח תשובה אוטומטית ללקוח
+                        return emailjs.send('service_dv42uhs', 'template_yre4m7t', {
+                            name: nameInput.value,
+                            email: emailInput.value,
+                            reply_to: 'madetomorrow10@gmail.com' // כתובת המייל שלך למענה
+                        });
+                    })
+                    .then(function(response) {
+                        if (response) {
+                            console.log('SUCCESS - Auto-reply to customer!', response.status, response.text);
+                        }
+                        
+                        // הצגת הודעת הצלחה
+                        showSuccessMessage();
+                        
+                        // איפוס הטופס
+                        contactForm.reset();
+                    })
+                    .catch(function(error) {
+                        console.log('FAILED...', error);
+                        
+                        // הצגת הודעת שגיאה
+                        showErrorMessage();
+                    })
+                    .finally(function() {
+                        // החזרת כפתור השליחה למצב רגיל
+                        submitBtn.innerHTML = 'קבל ייעוץ תדמית ללא עלות';
+                        submitBtn.disabled = false;
+                    });
             }
         });
-    }
 
-    // אפשרות שניה - שליחה לוואטסאפ
-    const whatsappBtn = document.querySelector('.whatsapp-contact');
-
-    if (whatsappBtn) {
-        whatsappBtn.addEventListener('click', function (e) {
-            e.preventDefault();
-
-            const name = document.getElementById('name').value || '';
-            const email = document.getElementById('email').value || '';
-            const phone = document.getElementById('phone').value || '';
-            const service = document.getElementById('service')?.value || '';
-            const message = document.getElementById('message').value || '';
-
-            // בנה את ההודעה לוואטסאפ
-            let whatsappMessage = `שלום, אני ${name}. `;
-
-            if (email) whatsappMessage += `המייל שלי: ${email}. `;
-            if (phone) whatsappMessage += `הטלפון שלי: ${phone}. `;
-            if (service) whatsappMessage += `אני מתעניין בשירות: ${service}. `;
-            if (message) whatsappMessage += `הודעה: ${message}`;
-
-            // החלף PHONE_NUMBER עם המספר שלך בפורמט בינלאומי (ללא + או מקפים)
-            const whatsappUrl = `https://wa.me/16465358055?text=${encodeURIComponent(whatsappMessage)}`;
-
-            window.open(whatsappUrl, '_blank');
-        });
+        // הוספת אפשרות שליחה לוואטסאפ
+        const whatsappLink = document.querySelector('.whatsapp-link');
+        if (whatsappLink) {
+            whatsappLink.addEventListener('click', function (e) {
+                // כבר מוגדר בקישור עצמו, לא צריך לשנות
+            });
+        }
     }
 
     // פונקציות עזר
@@ -110,5 +122,37 @@ document.addEventListener('DOMContentLoaded', function () {
     function isValidEmail(email) {
         const re = /^(([^<>()\[\]\\.,;:\s@"]+(\.[^<>()\[\]\\.,;:\s@"]+)*)|(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/;
         return re.test(String(email).toLowerCase());
+    }
+
+    function showSuccessMessage() {
+        // יצירת אלמנט הודעת הצלחה
+        const successMessage = document.createElement('div');
+        successMessage.className = 'form-message success-message';
+        successMessage.innerHTML = '<i class="fas fa-check-circle"></i> הפנייה נשלחה בהצלחה! נחזור אליך בהקדם.';
+        
+        // הוספת ההודעה לטופס
+        const formContainer = contactForm.parentElement;
+        formContainer.insertBefore(successMessage, contactForm);
+        
+        // הסתרת ההודעה אחרי 5 שניות
+        setTimeout(() => {
+            successMessage.remove();
+        }, 5000);
+    }
+
+    function showErrorMessage() {
+        // יצירת אלמנט הודעת שגיאה
+        const errorMessage = document.createElement('div');
+        errorMessage.className = 'form-message error-message';
+        errorMessage.innerHTML = '<i class="fas fa-times-circle"></i> אירעה שגיאה בשליחת הפנייה. אנא נסה שוב או צור קשר בטלפון.';
+        
+        // הוספת ההודעה לטופס
+        const formContainer = contactForm.parentElement;
+        formContainer.insertBefore(errorMessage, contactForm);
+        
+        // הסתרת ההודעה אחרי 5 שניות
+        setTimeout(() => {
+            errorMessage.remove();
+        }, 5000);
     }
 });
